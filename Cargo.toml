@@ -1,0 +1,9 @@
+[package]
+name = "fifo"
+version = "0.1.0"
+authors = ["Linus Hemingway Kromwell <lhk@lhk.me>"]
+
+[dependencies]
+mio = "*"
+bytes = "*"
+nix = "*"
