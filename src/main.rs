@@ -1,18 +1,12 @@
-extern crate mio;
+#![feature(expand_open_options)]
+#![feature(libc)]
 extern crate libc;
-extern crate bytes;
-extern crate nix;
 
-use std::os::unix::io::FromRawFd;
-use mio::tcp::TcpStream;
-use mio::unix::PipeReader;
-use mio::*;
 use libc::{mkfifo, open};
 use libc::{O_NONBLOCK, O_RDONLY};
 use std::ffi::CString;
+use std::os::unix::fs::*;
 use std::fs::*;
-
-const STDIN: Token = Token(0);
 
 fn mk_fifo() -> i32 {
     return unsafe {
@@ -22,10 +16,15 @@ fn mk_fifo() -> i32 {
     };
 }
 
+fn open_options() -> File {
+    return OpenOptions::new()
+                    .create(true)
+                    .custom_flags(O_NONBLOCK)
+                    .open("./fifoo")
+                    .unwrap();
+}
+
 fn main() {
-    let mut event_loop = EventLoop::new().unwrap();
-    let std_pipe = unsafe { PipeReader::from_raw_fd(mk_fifo()) };
-    event_loop.register(&std_pipe, STDIN,
-        EventSet::all() ^ EventSet::writable(), PollOpt::empty()).unwrap();
-    //event_loop.run().unwrap();
+    println!("{:?}", mk_fifo());
+    println!("{:?}", open_options());
 }
